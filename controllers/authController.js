@@ -9,11 +9,11 @@ const validatePassword = (password) => {
 
 // Signup
 const signup = async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
+  const { email, username, password, confirmPassword } = req.body;
 
   // Validation
-  if (!email || !password || !confirmPassword) {
-    return res.status(400).json({ message: 'Email, password, and confirm password are required.' });
+  if (!email || !username || !password || !confirmPassword) {
+    return res.status(400).json({ message: 'Email, username, password, and confirm password are required.' });
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,7 +33,10 @@ const signup = async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'Email already in use.' });
 
-    const user = new User({ email, password });
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) return res.status(400).json({ message: 'Username already in use.' });
+
+    const user = new User({ email, username, password });
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (err) {
@@ -58,7 +61,15 @@ const login = async (req, res) => {
     if (!isMatch) return res.status(401).json({ message: 'Invalid email or password' });
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ message: 'Logged in successfully', token: token });
+    res.json({ 
+      message: 'Logged in successfully', 
+      token: token,
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -7,7 +7,7 @@ router.use(authMiddleware);
 
 router.get('/', getTasks);
 router.post('/', createTask);
-router.put('/:id', updateTask);
+router.patch('/:id', updateTask);
 router.delete('/:id', deleteTask);
 
 module.exports = router;
