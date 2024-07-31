@@ -1,22 +1,18 @@
 const Task = require('../models/Task');
 const mongoose = require('mongoose');
 
-// Allowed values for status and priority
-const ALLOWED_STATUSES = ['To-Do', 'In Progress', 'Under Review', 'Completed'];
+const ALLOWED_STATUSES = ['To-Do', 'In Progress', 'Under Review', 'Finished'];
 const ALLOWED_PRIORITIES = ['Low', 'Medium', 'Urgent'];
 
-// Create a new task
 exports.createTask = async (req, res) => {
   try {
     const { title, status, priority, deadline, description } = req.body;
     const userId = req.user.id;
 
-    // Validate required fields
     if (!title || !status || !priority) {
       return res.status(400).json({ message: 'Title, status, and priority are required.' });
     }
 
-    // Validate status and priority against allowed values
     if (!ALLOWED_STATUSES.includes(status)) {
       return res.status(400).json({ message: `Invalid status. Allowed values are: ${ALLOWED_STATUSES.join(', ')}` });
     }
@@ -25,7 +21,6 @@ exports.createTask = async (req, res) => {
       return res.status(400).json({ message: `Invalid priority. Allowed values are: ${ALLOWED_PRIORITIES.join(', ')}` });
     }
 
-    // Create a new task
     const task = new Task({
       title,
       status,
@@ -44,12 +39,10 @@ exports.createTask = async (req, res) => {
 };
 
 
-// Get tasks for a user
 exports.getTasks = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: 'Invalid user ID.' });
     }
@@ -62,39 +55,48 @@ exports.getTasks = async (req, res) => {
   }
 };
 
-// Update a task
 exports.updateTask = async (req, res) => {
   try {
     const { title, status, priority, deadline, description } = req.body;
     const taskId = req.params.id;
 
-    // Validate taskId
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
       return res.status(400).json({ message: 'Invalid task ID.' });
     }
 
-    // Validate required fields
-    if (!title || !status || !priority) {
-      return res.status(400).json({ message: 'Title, status, and priority are required.' });
+    const updateFields = {};
+
+    if (title) {
+      updateFields.title = title;
     }
 
-    // Validate status and priority against allowed values
-    if (!ALLOWED_STATUSES.includes(status)) {
-      return res.status(400).json({ message: `Invalid status. Allowed values are: ${ALLOWED_STATUSES.join(', ')}` });
+    if (status) {
+      if (!ALLOWED_STATUSES.includes(status)) {
+        return res.status(400).json({ message: `Invalid status. Allowed values are: ${ALLOWED_STATUSES.join(', ')}` });
+      }
+      updateFields.status = status;
     }
 
-    if (!ALLOWED_PRIORITIES.includes(priority)) {
-      return res.status(400).json({ message: `Invalid priority. Allowed values are: ${ALLOWED_PRIORITIES.join(', ')}` });
+    if (priority) {
+      if (!ALLOWED_PRIORITIES.includes(priority)) {
+        return res.status(400).json({ message: `Invalid priority. Allowed values are: ${ALLOWED_PRIORITIES.join(', ')}` });
+      }
+      updateFields.priority = priority;
     }
 
-    // Update the task
-    const updatedTask = await Task.findByIdAndUpdate(taskId, {
-      title,
-      status,
-      priority,
-      deadline,
-      description,
-    }, { new: true });
+    if (deadline) {
+      const date = new Date(deadline);
+      if (isNaN(date.getTime())) {
+        return res.status(400).json({ message: 'Invalid deadline date.' });
+      }
+      updateFields.deadline = deadline;
+    }
+
+    if (description) {
+      updateFields.description = description;
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(taskId, updateFields, { new: true });
 
     if (!updatedTask) {
       return res.status(404).json({ message: 'Task not found.' });
@@ -107,12 +109,11 @@ exports.updateTask = async (req, res) => {
   }
 };
 
-// Delete a task
+
 exports.deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id;
 
-    // Validate taskId
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
       return res.status(400).json({ message: 'Invalid task ID.' });
     }

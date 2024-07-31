@@ -1,17 +1,14 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// Helper function for password validation
 const validatePassword = (password) => {
   const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
   return passwordRegex.test(password);
 };
 
-// Signup
 const signup = async (req, res) => {
   const { email, username, password, confirmPassword } = req.body;
 
-  // Validation
   if (!email || !username || !password || !confirmPassword) {
     return res.status(400).json({ message: 'Email, username, password, and confirm password are required.' });
   }
@@ -44,11 +41,9 @@ const signup = async (req, res) => {
   }
 };
 
-// Login
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  // Validation
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
   }
