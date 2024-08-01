@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 // CORS Middleware
 const allowedOrigins = [
   'https://trello-frontend-1myd7arls-niharikasthas-projects.vercel.app',
+  'https://trello-frontend-nine.vercel.app/',
   'http://localhost:3000' 
 ];
 
