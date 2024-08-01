@@ -8,10 +8,24 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
-app.use(cors());
+
+// CORS Middleware
+const allowedOrigins = [
+  'https://trello-frontend-nine.vercel.app',
+  'http://localhost:3000' // For local development
+];
+
 app.use(cors({
-  origin: 'https://trello-frontend-nine.vercel.app', 
-  credentials: true, 
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
 }));
 
 mongoose.connect(process.env.MONGODB_URI)
