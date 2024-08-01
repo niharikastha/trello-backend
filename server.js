@@ -12,7 +12,7 @@ app.use(cors());
 
 app.use(cors(
   {
-  origin: ['https://trello-backend-vert.vercel.app'], 
+  origin: ['https://trello-frontend-nine.vercel.app'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
