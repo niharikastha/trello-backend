@@ -9,8 +9,12 @@ const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://trello-frontend-nine.vercel.app',
+  credentials: true
+};
 
+app.use(cors(corsOptions));
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => {
