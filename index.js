@@ -11,8 +11,8 @@ app.use(bodyParser.json());
 
 // CORS Middleware
 const allowedOrigins = [
-  'https://trello-frontend-nine.vercel.app',
-  'http://localhost:3000' // For local development
+  'https://trello-frontend-1myd7arls-niharikasthas-projects.vercel.app',
+  'http://localhost:3000' 
 ];
 
 app.use(cors({
