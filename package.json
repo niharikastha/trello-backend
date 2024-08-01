@@ -16,9 +16,6 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.js",
-  "engines": {
-    "node": "20.x"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
