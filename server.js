@@ -12,10 +12,11 @@ app.use(cors());
 
 app.use(cors(
   {
-  origin: ['https://trello-frontend-nine.vercel.app'], 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  origin: '*', 
+  // methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowRequestHeaders: "Content-Type, Authorization",
+  credentials: true,
+  allRoutes : true
   }
 ));
 mongoose.connect(process.env.MONGODB_URI)
